@@ -22,6 +22,42 @@ now = 0
 radius = 20
 angle = 3 * Math.PI / 180
 
+doc_width = body.width()
+doc_height = $(document).height()
+
+random_start = 200
+random_end = 1000
+
+getRandomArbitrary = (min, max) =>
+  Math.random() * (max - min) + min
+
+dude = {
+  startPos: [(body.width()/2 - 530/2),200],
+  pos: [(body.width()/2 - 530/2),200],
+  sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],16,[0,1,2,3,4,5,6])
+}
+
+monitor = {
+  pos: [ body.height() + 300, 0],
+  sprite: new Sprite('images/monitor.png', [0,0], [157,196],1,[0]),
+  last_onscreen: 0,
+  onscreen: false,
+  next_onscreen: getRandomArbitrary random_start, random_end
+  speed: 5
+}
+
+controller = {
+  pos: [ body.height() + 300, 0],
+  sprite: new Sprite('images/controller.png', [0,0], [109,255],1,[0]),
+  last_onscreen: 0,
+  onscreen: false
+  next_onscreen: getRandomArbitrary random_start, random_end
+  speed: 1
+}
+
+clouds = []
+tweets = []
+
 main = () =>
   now = Date.now()
   dt = ( now - lastTime ) / 1000.0
@@ -32,9 +68,6 @@ main = () =>
   lastTime = now
   frame = requestAnimFrame(main)
   frame
-
-doc_width = body.width()
-doc_height = $(document).height()
 
 init = () =>
   canvas.width = doc_width
@@ -51,59 +84,78 @@ init = () =>
 loadResources = () ->
   resources.load([
     'images/img_dudeloop.png',
-    'images/bg.jpg'
+    'images/bg.jpg',
+    'images/monitor.png',
+    'images/controller.png'
   ])
   resources.onReady( init )
 
 $(document).ready loadResources
 
-dude = {
-  startPos: [(body.width()/2 - 530/2),200],
-  pos: [(body.width()/2 - 530/2),200],
-  sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],16,[0,1,2,3,4,5,6])
-}
-
-monitor = {
-  pos: [ doc_height + 300, 0],
-  sprite: new Sprite('images/monitor.png', [0,0], [157,196],1,[0])
-}
-
-controller = {
-  pos: [ doc_height + 300, 0],
-  sprite: new Sprite('images/controller.png', [0,0], [109,255],1,[0])
-}
-
-clouds = []
-tweets = []
-
 reset = () =>
   #console.log "reset does nothing yet"
 
 update = (dt) =>
-  doTwitterSearch(dt)
-  updateEntities(dt)
+  doTwitterSearch dt
+  updateEntities dt
+  updateDude dt
+  updateMonitor dt
+  updateController dt
+
 
 updateEntities = (dt) =>
-  console.log "now: ", now
 
+updateDude = (dt) =>
   angle += 3 * Math.PI / 180
-
   newX = dude.startPos[0] + ( radius * Math.cos angle )
   newY = dude.startPos[1] + ( radius * Math.sin angle )
 
   dude.pos = [ newX, newY ]
-
   dude.sprite.update dt
 
+updateThing = (thing,dt) =>
+  if thing.onscreen
+    thing.last_onscreen = now
+    if ( thing.last_onscreen - now ) * -1 > 1
+      thing.pos[1] -= thing.speed
 
+      if thing.pos[1] + thing.sprite.size[1] < 0
+        thing.onscreen = false
+        thing.next_onscreen = getRandomArbitrary random_start, random_end
+        thing.next_onscreen *= 1000
+        console.log "next onscreen for ", thing, thing.next_onscreen
+
+    thing.sprite.update dt
+
+  else
+    if ( thing.last_onscreen - now ) * -1 > thing.next_onscreen
+      thing.onscreen = true
+      thing.pos[1] = doc_height
+      thing.pos[1] += thing.sprite.size[1] + 1
+
+      minX = thing.sprite.size[0]
+      maxX = doc_width - thing.sprite.size[0]
+      newX = getRandomArbitrary minX, maxX
+
+      thing.pos[0] = newX
+
+updateController = (dt) =>
+  updateThing controller, dt
+
+updateMonitor = (dt) =>
+  updateThing monitor, dt
 
 render = () =>
   ctx.fillStyle = terrainPattern
   ctx.fillRect 0, 0, canvas.width, canvas.height
 
-  renderEntity(dude)
-  renderEntities(clouds)
-  renderEntities(tweets)
+  renderEntity monitor
+  renderEntity controller
+
+  renderEntity dude
+
+  renderEntities clouds
+  renderEntities tweets
 
 renderEntities = (list) =>
   renderEntity ent for ent in list
