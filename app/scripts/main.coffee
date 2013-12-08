@@ -17,6 +17,10 @@ document.getElementById('container').appendChild canvas
 terrainPattern = 0
 
 lastTime = 0
+now = 0
+
+radius = 20
+angle = 3 * Math.PI / 180
 
 main = () =>
   now = Date.now()
@@ -33,10 +37,8 @@ doc_width = body.width()
 doc_height = $(document).height()
 
 init = () =>
-
   canvas.width = doc_width
   canvas.height = doc_height
-
 
   pattern = resources.get 'images/bg.jpg'
   terrainPattern = ctx.createPattern pattern, 'repeat'
@@ -56,7 +58,8 @@ loadResources = () ->
 $(document).ready loadResources
 
 dude = {
-  pos: [(body.width()/2 - 530/2),100],
+  startPos: [(body.width()/2 - 530/2),200],
+  pos: [(body.width()/2 - 530/2),200],
   sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],16,[0,1,2,3,4,5,6])
 }
 
@@ -81,6 +84,15 @@ update = (dt) =>
   updateEntities(dt)
 
 updateEntities = (dt) =>
+  console.log "now: ", now
+
+  angle += 3 * Math.PI / 180
+
+  newX = dude.startPos[0] + ( radius * Math.cos angle )
+  newY = dude.startPos[1] + ( radius * Math.sin angle )
+
+  dude.pos = [ newX, newY ]
+
   dude.sprite.update dt
 
 
