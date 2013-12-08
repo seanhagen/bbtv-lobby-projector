@@ -29,10 +29,13 @@ main = () =>
   frame = requestAnimFrame(main)
   frame
 
+doc_width = body.width()
+doc_height = $(document).height()
+
 init = () =>
 
-  canvas.width = body.width() - 30
-  canvas.height = $(document).height() - 50
+  canvas.width = doc_width
+  canvas.height = doc_height
 
 
   pattern = resources.get 'images/bg.jpg'
@@ -56,6 +59,17 @@ dude = {
   pos: [(body.width()/2 - 530/2),100],
   sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],16,[0,1,2,3,4,5,6])
 }
+
+monitor = {
+  pos: [ doc_height + 300, 0],
+  sprite: new Sprite('images/monitor.png', [0,0], [157,196],1,[0])
+}
+
+controller = {
+  pos: [ doc_height + 300, 0],
+  sprite: new Sprite('images/controller.png', [0,0], [109,255],1,[0])
+}
+
 clouds = []
 tweets = []
 
@@ -68,6 +82,8 @@ update = (dt) =>
 
 updateEntities = (dt) =>
   dude.sprite.update dt
+
+
 
 render = () =>
   ctx.fillStyle = terrainPattern
