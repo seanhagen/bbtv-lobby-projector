@@ -34,7 +34,7 @@ getRandomArbitrary = (min, max) =>
 dude = {
   startPos: [(body.width()/2 - 530/2),200],
   pos: [(body.width()/2 - 530/2),200],
-  sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],13,[0,1,2,3,4,5,6])
+  sprite: new Sprite('images/img_dudeloop.png', [0,0], [530,288],7,[0,1,2,3,4,5,6])
 }
 
 monitor = {
@@ -101,7 +101,6 @@ update = (dt) =>
   updateDude dt
   updateMonitor dt
   updateController dt
-
 
 updateEntities = (dt) =>
   updateDude dt
