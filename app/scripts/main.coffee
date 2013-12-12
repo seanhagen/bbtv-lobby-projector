@@ -19,8 +19,8 @@ terrainPattern = 0
 lastTime = 0
 now = 0
 
-radius = 20
-angle = 3 * Math.PI / 180
+radius = 10
+angle = 2 * Math.PI / 180
 
 doc_width = body.width()
 doc_height = $(document).height()
