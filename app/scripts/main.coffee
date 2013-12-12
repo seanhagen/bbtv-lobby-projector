@@ -104,12 +104,12 @@ update = (dt) =>
 
 
 updateEntities = (dt) =>
+  updateDude dt
 
 updateDude = (dt) =>
   angle += 3 * Math.PI / 180
   newX = dude.startPos[0] + ( radius * Math.cos angle )
   newY = dude.startPos[1] + ( radius * Math.sin angle )
-
   dude.pos = [ newX, newY ]
   dude.sprite.update dt
 
