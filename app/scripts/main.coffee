@@ -115,15 +115,14 @@ updateDude = (dt) =>
 
 updateThing = (thing,dt) =>
   if thing.onscreen
-    thing.last_onscreen = now
     if ( thing.last_onscreen - now ) * -1 > 1
       thing.pos[1] -= thing.speed
 
       if thing.pos[1] + thing.sprite.size[1] < 0
+        thing.last_onscreen = now        
         thing.onscreen = false
         thing.next_onscreen = getRandomArbitrary random_start, random_end
         thing.next_onscreen *= 1000
-        console.log "next onscreen for ", thing, thing.next_onscreen
 
     thing.sprite.update dt
 
